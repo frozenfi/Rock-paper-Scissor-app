@@ -1,0 +1,195 @@
+kjhbfgweconst game = () => {
+  let pScore = 0;
+  let cScore = 0;
+  let winHistory = [];
+  let checkWinsInARow = 0;
+
+  //Start the Game
+  const startGame = () => {
+    const playBtn = document.querySelector(".intro button");
+    let introScreen = document.querySelector(".intro");
+    const match = document.querySelector(".match");
+
+    playBtn.addEventListener("click", () => {
+      introScreen.classList.add("fadeOut");
+      match.classList.add("fadeIn");
+    });
+  };
+
+  //Play Match
+  const playMatch = () => {
+    const options = document.querySelectorAll(".options button");
+    const playerHand = document.querySelector(".player-hand");
+    const computerHand = document.querySelector(".computer-hand");
+    const hands = document.querySelectorAll(".hands img");
+
+    hands.forEach((hand) => {
+      hand.addEventListener("animationend", function () {
+        this.style.animation = "";
+      });
+    });
+
+    //Computer Options
+    const computerOptions = ["rock", "paper", "scissors"];
+    for (const option of options) {
+      option.addEventListener("click", () => {
+        //Computer Choice
+        const computerNumber = Math.floor(Math.random() * 3);
+        const computerChoice = computerOptions[computerNumber];
+
+        setTimeout(() => {
+          //Here is where we call compare hands
+          compareHands(option.textContent, computerChoice);
+          //Update Images
+          playerHand.src = `./images/${option.textContent}.png`;
+          computerHand.src = `./images/${computerChoice}.png`;
+        }, 2000);
+        setInterval(() => {
+          playerHand.src = `./images/rock.png`;
+          computerHand.src = `./images/rock.png`;
+        }, 2500);
+
+        //Animation
+        playerHand.style.animation = "shakePlayer 2s ease";
+        computerHand.style.animation = "shakeComputer 2s ease";
+      });
+    }
+  };
+
+  const updateScore = () => {
+    const playerScore = document.querySelector(".player-score p");
+    const computerScore = document.querySelector(".computer-score p");
+
+    playerScore.textContent = pScore;
+    computerScore.textContent = cScore;
+  };
+  // Total Score
+
+  const compareHands = (playerChoice, computerChoice) => {
+    //Update Text
+    const winner = document.querySelector(".winner");
+    //Checking for a tie
+    if (pScore < 5 && cScore < 5) {
+      if (playerChoice === computerChoice) {
+        winner.textContent = "It is a tie";
+        winHistory.push("t");
+        console.log(winHistory);
+        return;
+      }
+      //Check for Rock
+      if (playerChoice === "rock") {
+        if (computerChoice === "scissors") {
+          winner.textContent = "Player Wins";
+          pScore++;
+          updateScore();
+          winHistory.push("p");
+
+          console.log(winHistory);
+          return;
+        } else {
+          winner.textContent = "Computer Wins";
+          cScore++;
+          updateScore();
+          winHistory.push("c");
+
+          console.log(winHistory);
+          return;
+        }
+      }
+      //Check for Paper
+      if (playerChoice === "paper") {
+        if (computerChoice === "scissors") {
+          winner.textContent = "Computer Wins";
+          cScore++;
+          updateScore();
+          winHistory.push("c");
+          console.log(winHistory);
+          return;
+        } else {
+          winner.textContent = "Player Wins";
+          pScore++;
+          updateScore();
+          winHistory.push("p");
+          console.log(winHistory);
+          return;
+        }
+      }
+
+      //Check for Scissors
+      if (playerChoice === "scissors") {
+        if (computerChoice === "rock") {
+          winner.textContent = "Computer Wins";
+          cScore++;
+          updateScore();
+          winHistory.push("c");
+          console.log(winHistory);
+          return;
+        } else {
+          winner.textContent = "Player Wins";
+          pScore++;
+          updateScore();
+          winHistory.push("p");
+          console.log(winHistory);
+          return;
+        }
+      }
+    } else if (pScore === 5 || cScore === 5) {
+      hideText();
+      winnerAnnouncement();
+      restartGame();
+    }
+
+    const retryButton = document.querySelector(".retrybutton");
+
+    restartGame = retryButton.addEventListener("click", () => {
+      match.classList.add("fadeOut");
+      introScreen.classList.add("fadeIn");
+    });
+
+    const checkWinsInARow = (winCount) => {
+      if (winHistory.length < winCount) {
+        return false;
+      }
+      const itemsCompared = winHistory.slice(winHistory.length - winCount);
+      console.log(itemsCompared);
+      if (
+        itemsCompared[0] == itemsCompared[1] &&
+        itemsCompared[1] == itemsCompared[2]
+      ) {
+        if ((itemsCompared[0] = "c")) {
+          return "3 wins in a row for computer";
+        }
+      }
+      console.log(checkWinsInARow);
+    };
+    //Winner of the game
+  };
+  const gameOver = document.querySelector(".gameover");
+
+  function winnerAnnouncement() {
+    if (pScore === 5) {
+      gameOver.textContent = "Player Won the game! Congratulations";
+    } else if (cScore === 5) {
+      gameOver.textContent = "Computer Won the game! Congratulations";
+    } else {
+      gameOver.textContent = "It's a Tie ! Better Luck Next Time !";
+    }
+  }
+  const hidden = document.querySelector(".hidden");
+  const options = document.querySelector(".options");
+  const intro = document.querySelector(".intro");
+  const hands = document.querySelector(".hands");
+
+  function hideText() {
+    hidden.classList.toggle("normal");
+    options.classList.toggle("hidden");
+    intro.classList.toggle("hidden");
+    hands.classList.toggle("hidden");
+  }
+
+  //Is call all the inner function
+  startGame();
+  playMatch();
+};
+//start the game function
+game();
